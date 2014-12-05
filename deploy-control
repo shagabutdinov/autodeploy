@@ -37,7 +37,7 @@ def stop()
     return
   end
 
-  Process.kill(:INT, pid)
+  Process.kill(:INT, pid.to_i())
   File.delete(PID_PATH)
 end
 
