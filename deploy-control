@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-COMMAND = './idfly-deploy'
+COMMAND = 'idfly-deploy'
 ARGS = []
 
 PID_PATH = "/var/run/#{COMMAND}.pid"
