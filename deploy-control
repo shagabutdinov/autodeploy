@@ -52,7 +52,7 @@ def status()
     return
   end
 
-  status = system(Shellwords.join(['ps', '-h', File.read(PID_PATH)]))
+  status = system(Shellwords.join(['ps', 'h', File.read(PID_PATH)]))
   puts(`#{status}`)
 end
 
