@@ -85,7 +85,7 @@ def send_slack_notification(site)
   matches = (`git log --oneline | head -n 1` || '').match(/#(\d+)/)
   if matches[1]
     redmine_url = _get_config()[:redmine][:url] rescue nil
-    text += " <#{redmine_url}/issues/matches[1]|##{matches[1]}>"
+    text += " <#{redmine_url}/issues/#{matches[1]}|##{matches[1]}>"
   end
 
   message = config[:message].
