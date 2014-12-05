@@ -6,7 +6,8 @@ require 'shellwords'
 CONFIG_PATH = ARGV[0] || "/etc/idfly-deploy"
 
 def _get_config()
-  JSON.parse(File.read(CONFIG_PATH), {symbolize_names: true})
+  config = JSON.parse(File.read(CONFIG_PATH), {symbolize_names: true})
+
   Dir.foreach('/home') { |dir|
     if dir[0] == '.'
       next
@@ -25,6 +26,8 @@ def _get_config()
       end
     }
   }
+
+  return config
 end
 
 def deploy(key)
