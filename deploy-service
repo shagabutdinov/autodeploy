@@ -80,13 +80,22 @@ def send_slack_notification(site)
     return
   end
 
-  text = "#{site[:name]} выгружен на #{site[:url]}"
+
+  text = ''
 
   matches = (`git log --oneline | head -n 1` || '').match(/#(\d+)/)
-  if matches[1]
+  if matches
     redmine_url = _get_config()[:redmine][:url] rescue nil
-    text += " <#{redmine_url}/issues/#{matches[1]}|##{matches[1]}>"
+    text = "<#{redmine_url}/issues/#{matches[1]}|##{matches[1]}>"
   end
+
+  if text.empty?()
+    text = "#{site[:name]}"
+  else
+    text += " (#{site[:name]})"
+  end
+
+  text += " выгружен#{matches && 'а'} на #{site[:url]}"
 
   message = config[:message].
     merge(site[:slack_message] || {}).
