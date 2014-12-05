@@ -47,7 +47,7 @@ end
 
 def deploy_site(site)
   Dir.chdir(site[:path]) {
-    _run_command(['sudo', '-u', site[:user], 'git', 'pull'])
+    _run_command('sudo', '-u', site[:user], 'git', 'pull')
   }
 
   puts("Site \"#{site[:name]}\" were deployed")
