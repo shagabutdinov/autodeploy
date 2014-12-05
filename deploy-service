@@ -68,7 +68,7 @@ def update_redmine_repositories()
     "#{config[:url]}/sys/fetch_changesets" +
     "?key=#{config[:api_key]}"
 
-  _run_command('wget', '-o', '/dev/null', url)
+  _run_command('wget', url, '-o', '/dev/null')
 end
 
 def send_slack_notification(site)
@@ -87,7 +87,7 @@ def send_slack_notification(site)
     merge({'text' => "#{site[:name]} выгружен на #{site[:url]}"})
 
   encoded_message = JSON.dump(message)
-  _run_command('wget', '-o', '/dev/null', '--post-data', encoded_message, url)
+  _run_command('wget', '--post-data', encoded_message, url, '-o', '/dev/null')
 end
 
 def _run_command(*args)
