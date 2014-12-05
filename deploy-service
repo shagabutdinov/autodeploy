@@ -44,17 +44,15 @@ def deploy(key)
   end
 
   site = sites[key]
-
-  deploy_site(site)
-  update_redmine_repositories()
-  send_slack_notification(site)
+  Dir.chdir(site[:path]) {
+    deploy_site(site)
+    update_redmine_repositories()
+    send_slack_notification(site)
+  }
 end
 
 def deploy_site(site)
-  Dir.chdir(site[:path]) {
-    _run_command('sudo', '-u', site[:user], 'git', 'pull')
-  }
-
+  _run_command('sudo', '-u', site[:user], 'git', 'pull')
   puts("Site \"#{site[:name]}\" were deployed")
 end
 
@@ -82,9 +80,17 @@ def send_slack_notification(site)
     return
   end
 
+  text = "#{site[:name]} выгружен на #{site[:url]}"
+
+  matches = (`git log --oneline | head -n 1` || '').match(/#(\d+)/)
+  if matches[0]
+    redmine_url = _get_config()[:redmine][:url] rescue nil
+    text += " <#{redmine_url}|##{matches[0]}>"
+  end
+
   message = config[:message].
     merge(site[:slack_message] || {}).
-    merge({'text' => "#{site[:name]} выгружен на #{site[:url]}"})
+    merge({'text' => text})
 
   encoded_message = JSON.dump(message)
   _run_command('wget', '--post-data', encoded_message, url, '-o', '/dev/null')
