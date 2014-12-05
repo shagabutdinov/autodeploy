@@ -3,7 +3,7 @@
 # description: Some description
 # What your script does (not sure if this is necessary though)
 # processname: idfly-deploy
-#
+
 COMMAND = 'idfly-deploy'
 ARGS = []
 
