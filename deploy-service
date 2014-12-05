@@ -93,7 +93,7 @@ end
 def _run_command(*args)
   command = Shellwords.join([*args])
 
-  puts command
+  puts(command)
   puts(system(command))
 end
 

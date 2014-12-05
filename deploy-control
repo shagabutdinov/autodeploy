@@ -22,7 +22,7 @@ def start()
   File.write(PID_PATH, pid)
   Process.detach(pid)
   sleep(0.1)
-  status = Shellwords.join(['ps', '-h', File.read(PID_PATH)])
+  status = Shellwords.join(['ps', 'h', File.read(PID_PATH)])
   if `#{status}`.empty?()
     puts('Failed')
   else
@@ -33,7 +33,7 @@ end
 def stop()
   pid = File.read(PID_PATH) rescue nil
   if pid == nil || pid.empty?()
-    puts "#{COMMAND} is not running"
+    puts("#{COMMAND} is not running")
     return
   end
 
