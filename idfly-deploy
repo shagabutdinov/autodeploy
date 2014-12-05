@@ -1,0 +1,103 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'shellwords'
+
+CONFIG_PATH = ARGV[0] || "/etc/idfly-deploy"
+
+def _get_config()
+  JSON.parse(File.read(CONFIG_PATH), {symbolize_names: true})
+  Dir.foreach('/home') { |dir|
+    if dir[0] == '.'
+      next
+    end
+
+    path = File.join(dir, 'deploy.conf')
+    if !File.exist?(path)
+      next
+    end
+
+    local_config = JSON.parse(File.read(CONFIG_PATH), {symbolize_names: true})
+    site_config = config[:sites][dir.to_sym()]
+    [:name, :url, :message].each() { |key|
+      if local_config.has_key?(key)
+        site_config[key] = local_config[key]
+      end
+    }
+  }
+end
+
+def deploy(key)
+  key = key.to_sym()
+  sites = _get_config()[:sites]
+  if !sites.has_key?(key)
+    STDERR.puts("Site \"#{key}\" not exists")
+    return
+  end
+
+  site = sites[key]
+
+  deploy_site(site)
+  update_redmine_repositories()
+  send_slack_notification(site)
+end
+
+def deploy_site(site)
+  Dir.chdir(site[:path]) {
+    _run_command(['sudo', '-u', site[:user], 'git', 'pull'])
+  }
+
+  puts("Site \"#{site[:name]}\" were deployed")
+end
+
+def update_redmine_repositories()
+  config = _get_config()[:redmine]
+  if config.nil?()
+    return
+  end
+
+  url =
+    "#{config[:url]}/sys/fetch_changesets" +
+    "?key=#{config[:api_key]}"
+
+  _run_command('wget', '-o', '/dev/null', url)
+end
+
+def send_slack_notification(site)
+  config = _get_config()[:slack]
+  if config.nil?()
+    return
+  end
+
+  url = site[:slack_webhook_url] || config[:webhook_url]
+  if !url
+    return
+  end
+
+  message = config[:message].
+    merge(site[:slack_message]).
+    merge({'text' => "#{site[:name]} выгружен на #{site[:url]}"})
+
+  encoded_message = JSON.dump(message)
+  _run_command('wget', '-o', '/dev/null', '--post-data', encoded_message, url)
+end
+
+def _run_command(*args)
+  command = Shellwords.join([*args])
+
+  puts command
+  puts(system(command))
+end
+
+# web server
+
+require 'rack'
+
+app = Proc.new do |env|
+  req = Rack::Request.new(env)
+  site = req.params['site']
+  deploy(site)
+  ['200', {'Content-Type' => 'text/html'}, ['OK']]
+end
+
+Rack::Handler::WEBrick.run(app, _get_config()[:server] || {})

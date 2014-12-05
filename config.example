@@ -1,0 +1,32 @@
+{
+  "sites": {
+    "9fine-idfly-ru": {
+      "name": "9fine-idfly-ru",
+      "url": "http://9fine.idfly.ru",
+      "path": "/home/admin/web/9fine.idfly.ru/public_html",
+      "user": "9fine-idfly-ru",
+      "slack_webhook_url": ""
+      "slack_message": {
+        "username": "autodeploy",
+        "icon_url": "http://idfly.ru/img/main/logo.png"
+      }
+    }
+  },
+
+  "redmine": {
+    "url": "http://rm.idfly.ru",
+    "api_key": "9RMsUpoDwIC0MA1kuQLu"
+  },
+
+  "server": {
+    "Port": 1205
+  },
+
+  "slack": {
+    "webhook_url": "https://hooks.slack.com/services/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",
+    "message": {
+      "username": "autodeploy",
+      "icon_url": "http://idfly.ru/img/main/logo.png"
+    }
+  }
+}
