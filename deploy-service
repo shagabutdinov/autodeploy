@@ -78,7 +78,7 @@ def send_slack_notification(site)
   end
 
   message = config[:message].
-    merge(site[:slack_message]).
+    merge(site[:slack_message] || {}).
     merge({'text' => "#{site[:name]} выгружен на #{site[:url]}"})
 
   encoded_message = JSON.dump(message)
