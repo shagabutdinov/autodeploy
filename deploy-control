@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
-
+# chkconfig: 2345 95 20
+# description: Some description
+# What your script does (not sure if this is necessary though)
+# processname: idfly-deploy
+#
 COMMAND = 'idfly-deploy'
 ARGS = []
 
