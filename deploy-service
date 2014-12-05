@@ -19,8 +19,13 @@ def _get_config()
     end
 
     local_config = JSON.parse(File.read(CONFIG_PATH), {symbolize_names: true})
-    site_config = config[:sites][dir.to_sym()]
-    [:name, :url, :message].each() { |key|
+    dir_sym = dir.to_sym()
+    if config[:sites][dir_sym].nil?()
+      config[:sites][dir_sym] = {user: dir_sym}
+    end
+
+    site_config = config[:sites][dir_sym]
+    [:name, :url, :message, :path].each() { |key|
       if local_config.has_key?(key)
         site_config[key] = local_config[key]
       end
