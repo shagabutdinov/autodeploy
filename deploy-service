@@ -13,12 +13,17 @@ def _get_config()
       next
     end
 
-    path = File.join(dir, 'deploy.conf')
+    path = File.join('/', 'home', dir, 'deploy.conf')
     if !File.exist?(path)
       next
     end
+    
+    begin
+      local_config = JSON.parse(File.read(path), {symbolize_names: true})
+    rescue => error
+      puts("Failed to read config #{path}", error.to_s())
+    end
 
-    local_config = JSON.parse(File.read(CONFIG_PATH), {symbolize_names: true})
     dir_sym = dir.to_sym()
     if config[:sites][dir_sym].nil?()
       config[:sites][dir_sym] = {user: dir_sym}
@@ -120,7 +125,7 @@ def _run_command(*args)
   command = Shellwords.join([*args])
 
   puts(command)
-  puts(system(command))
+  system(command)
 end
 
 # web server
