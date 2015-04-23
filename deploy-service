@@ -54,6 +54,17 @@ end
 def deploy_site(site)
   _run_command('sudo', '-u', site[:user], 'git', 'pull')
   puts("Site \"#{site[:name]}\" were deployed")
+
+  if site.has_key?(:exec)
+    exec = site[:exec]
+    if !exec.instance_of?(::Array)
+      exec = [exec]
+    end
+
+    exec.each() { |command|
+      _run_command('sudo', '-u', site[:user], 'bash', '-c', command)
+    }
+  end
 end
 
 def update_redmine_repositories()

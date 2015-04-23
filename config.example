@@ -9,7 +9,10 @@
       "slack_message": {
         "username": "autodeploy",
         "icon_url": "http://idfly.ru/img/main/logo.png"
-      }
+      },
+      "exec": [
+        "echo test > ~/test.log"
+      ]
     }
   },
 
