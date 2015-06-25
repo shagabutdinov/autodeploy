@@ -135,6 +135,9 @@ require 'rack'
 app = Proc.new do |env|
   req = Rack::Request.new(env)
   site = req.params['site']
+  puts("-" * 80)
+  puts("#{DateTime.now().to_s()}: deployment of #{site}")
+  puts("-" * 80)
   deploy(site)
   ['200', {'Content-Type' => 'text/html'}, ['OK']]
 end

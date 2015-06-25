@@ -8,8 +8,7 @@ COMMAND = 'idfly-deploy'
 ARGS = []
 
 PID_PATH = "/var/run/#{COMMAND}.pid"
-OUT_LOG_PATH = "/var/log/#{COMMAND}.out"
-ERR_LOG_PATH = "/var/log/#{COMMAND}.err"
+LOG_PATH = "/var/log/#{COMMAND}"
 
 require 'shellwords'
 
@@ -18,9 +17,10 @@ def start()
   STDOUT.write("Executing: #{command}... ")
 
   pid = Process.spawn(
-    command, in: '/dev/null',
-    out: OUT_LOG_PATH,
-    err: ERR_LOG_PATH
+    command, {
+      in: '/dev/null',
+      [:out, :err] => [LOG_PATH, 'a'],
+    }
   )
 
   File.write(PID_PATH, pid)
